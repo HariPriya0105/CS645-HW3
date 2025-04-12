@@ -54,7 +54,7 @@ function AdminView() {
                                 <td>{survey.dateOfSurvey}</td>
                                 <td>
                                     <Link to={`/edit/${survey.id}`} className="submit-btn">Edit</Link>
-                                    <button onClick={() => handleDelete(survey.id)} className="cancel-btn">Delete</button>
+                                    <button onClick={() => handleDelete(survey.id)} className="-cancel-btn">Delete</button>
                                 </td>
                             </tr>
                         ))}
