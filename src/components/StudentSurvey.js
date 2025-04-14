@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function StudentSurvey() {
     const [formData, setFormData] = useState({
         firstName: '',
@@ -36,7 +38,7 @@ function StudentSurvey() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8081/api/surveys', formData);
+            await axios.post(`${API_URL}/api/surveys`, formData);
             alert('Survey submitted!');
             setFormData({
                 firstName: '',
