@@ -2,13 +2,15 @@ import React, { useState, useEffect, useCallback} from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function EditForm() {
     const { id } = useParams();
     const [formData, setFormData] = useState(null);
 
     const fetchSurvey = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/surveys/${id}`);
+            const response = await axios.get(`${API_URL}/surveys/${id}`);
             setFormData(response.data);
         } catch (error) {
             alert('Survey not found: ' + error.message);
@@ -27,7 +29,7 @@ function EditForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:8080/surveys/${id}`, formData);
+            await axios.put(`${API_URL}/surveys/${id}`, formData);
             alert('Survey updated!');
         } catch (error) {
             alert('Update failed: ' + error.message);

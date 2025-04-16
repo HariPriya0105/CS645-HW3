@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function AdminView() {
     const [surveys, setSurveys] = useState([]);
 
@@ -11,7 +13,7 @@ function AdminView() {
 
     const fetchSurveys = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/surveys');
+            const response = await axios.get(`${API_URL}/surveys`);
             setSurveys(response.data);
         } catch (error) {
             alert('Failed to fetch surveys: ' + error.message);
@@ -21,7 +23,7 @@ function AdminView() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this survey?')) {
             try {
-                await axios.delete(`http://localhost:8080/surveys/${id}`);
+                await axios.delete(`${API_URL}/surveys/${id}`);
                 setSurveys(surveys.filter(survey => survey.id !== id));
             } catch (error) {
                 alert('Delete failed: ' + error.message);
