@@ -20,7 +20,7 @@ function AdminView() {
             // Add index as fallback ID if ID is missing
             const surveysWithIds = response.data.map((survey, index) => ({
                 ...survey,
-                id: survey.id || index + 1 // Use existing ID if available, otherwise use index+1
+                id: survey.id || index + 1
             }));
             setSurveys(surveysWithIds);
         } catch (error) {
@@ -41,17 +41,6 @@ function AdminView() {
         }
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return 'N/A';
-        
-        const date = new Date(dateString);
-        // Check if date is valid
-        if (isNaN(date.getTime())) {
-            return dateString; // Return the original string if date is invalid
-        }
-        
-        return date.toLocaleDateString();
-    };
 
     return (
         <div className="admin-view">
