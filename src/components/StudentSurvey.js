@@ -38,7 +38,7 @@ function StudentSurvey() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API_URL}/api/surveys`, formData);
+            await axios.post(`${API_URL}/surveys`, formData);
             alert('Survey submitted!');
             setFormData({
                 firstName: '',

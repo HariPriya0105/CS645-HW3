@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import './AdminView.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function AdminView() {
     const [surveys, setSurveys] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchSurveys();
@@ -13,10 +15,18 @@ function AdminView() {
 
     const fetchSurveys = async () => {
         try {
+            setLoading(true);
             const response = await axios.get(`${API_URL}/surveys`);
-            setSurveys(response.data);
+            // Add index as fallback ID if ID is missing
+            const surveysWithIds = response.data.map((survey, index) => ({
+                ...survey,
+                id: survey.id || index + 1 // Use existing ID if available, otherwise use index+1
+            }));
+            setSurveys(surveysWithIds);
         } catch (error) {
             alert('Failed to fetch surveys: ' + error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -31,37 +41,59 @@ function AdminView() {
         }
     };
 
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        
+        const date = new Date(dateString);
+        // Check if date is valid
+        if (isNaN(date.getTime())) {
+            return dateString; // Return the original string if date is invalid
+        }
+        
+        return date.toLocaleDateString();
+    };
+
     return (
-        <div className="content">
-            <h1>Admin View</h1>
-            <div className="container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {surveys.map(survey => (
-                            <tr key={survey.id}>
-                                <td>{survey.id}</td>
-                                <td>{survey.firstName}</td>
-                                <td>{survey.lastName}</td>
-                                <td>{survey.email}</td>
-                                <td>{survey.dateOfSurvey}</td>
-                                <td>
-                                    <Link to={`/edit/${survey.id}`} className="submit-btn">Edit</Link>
-                                    <button onClick={() => handleDelete(survey.id)} className="-cancel-btn">Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+        <div className="admin-view">
+            <div className="admin-header">
+                <h1>Admin Dashboard</h1>
+                <p>Manage all survey submissions</p>
+            </div>
+            
+            <div className="admin-container">
+                {loading ? (
+                    <div className="loading">Loading surveys...</div>
+                ) : surveys.length === 0 ? (
+                    <div className="no-data">No survey submissions found</div>
+                ) : (
+                    <div className="table-responsive">
+                        <table className="surveys-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {surveys.map((survey, index) => (
+                                    <tr key={index}>
+                                        <td>{survey.id}</td>
+                                        <td>{survey.firstName}</td>
+                                        <td>{survey.lastName}</td>
+                                        <td>{survey.email}</td>
+                                        <td className="action-buttons">
+                                            <Link to={`/edit/${survey.id}`} className="edit-btn">Edit</Link>
+                                            <button onClick={() => handleDelete(survey.id)} className="delete-btn">Delete</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </div>
     );
